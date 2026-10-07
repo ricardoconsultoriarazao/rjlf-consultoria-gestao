@@ -6,9 +6,11 @@ import { FormField } from "../../components/FormField";
 import { buildConsultantExport, downloadJson } from "../../lib/export";
 import {
   CompanyData,
+  OrganogramArea,
   PveData,
   RcfData,
   WorkspaceData,
+  createEmptyOrganogramArea,
   createEmptyRcf,
   emptyCompany,
   emptyPve,
@@ -20,6 +22,7 @@ const steps = [
   { id: "company", title: "Dados da Empresa", detail: "Identificacao e contexto" },
   { id: "pve", title: "PVE", detail: "Cultura e direcao" },
   { id: "rcf", title: "RCF", detail: "Funcao por funcao" },
+  { id: "organogram", title: "Organograma", detail: "Areas e responsabilidades" },
   { id: "export", title: "Exportar", detail: "Arquivo do consultor" }
 ] as const;
 
@@ -31,14 +34,19 @@ export default function DashboardPage() {
   const [pve, setPve] = useState<PveData>(emptyPve);
   const [rcfs, setRcfs] = useState<RcfData[]>([]);
   const [selectedRcfId, setSelectedRcfId] = useState<string>("");
+  const [organogram, setOrganogram] = useState<OrganogramArea[]>([]);
+  const [selectedAreaId, setSelectedAreaId] = useState<string>("");
   const [saveMessage, setSaveMessage] = useState("");
 
   useEffect(() => {
     const saved = localStorage.getItem(storageKey);
     if (!saved) {
       const firstRcf = createEmptyRcf();
+      const firstArea = createEmptyOrganogramArea();
       setRcfs([firstRcf]);
       setSelectedRcfId(firstRcf.id);
+      setOrganogram([firstArea]);
+      setSelectedAreaId(firstArea.id);
       return;
     }
 
@@ -47,6 +55,11 @@ export default function DashboardPage() {
     setPve(parsed.pve || emptyPve);
     setRcfs(parsed.rcfs?.length ? parsed.rcfs : [createEmptyRcf()]);
     setSelectedRcfId(parsed.rcfs?.[0]?.id || "");
+    const nextOrganogram = parsed.organogram?.length
+      ? parsed.organogram
+      : [createEmptyOrganogramArea()];
+    setOrganogram(nextOrganogram);
+    setSelectedAreaId(nextOrganogram[0]?.id || "");
   }, []);
 
   const selectedRcf = useMemo(
@@ -54,7 +67,12 @@ export default function DashboardPage() {
     [rcfs, selectedRcfId]
   );
 
-  const data: WorkspaceData = { company, pve, rcfs };
+  const selectedArea = useMemo(
+    () => organogram.find((area) => area.id === selectedAreaId) || organogram[0],
+    [organogram, selectedAreaId]
+  );
+
+  const data: WorkspaceData = { company, pve, rcfs, organogram };
 
   function persist(nextData: WorkspaceData = data) {
     localStorage.setItem(storageKey, JSON.stringify(nextData));
@@ -109,6 +127,27 @@ export default function DashboardPage() {
     const fallback = next[0] || createEmptyRcf();
     setRcfs(next.length ? next : [fallback]);
     setSelectedRcfId(fallback.id);
+  }
+
+  function updateArea(field: keyof OrganogramArea, value: string) {
+    setOrganogram((current) =>
+      current.map((area) =>
+        area.id === selectedArea.id ? { ...area, [field]: value } : area
+      )
+    );
+  }
+
+  function addArea() {
+    const area = createEmptyOrganogramArea();
+    setOrganogram((current) => [...current, area]);
+    setSelectedAreaId(area.id);
+  }
+
+  function removeArea(id: string) {
+    const next = organogram.filter((area) => area.id !== id);
+    const fallback = next[0] || createEmptyOrganogramArea();
+    setOrganogram(next.length ? next : [fallback]);
+    setSelectedAreaId(fallback.id);
   }
 
   function exportJson() {
@@ -244,13 +283,53 @@ export default function DashboardPage() {
             </>
           )}
 
+          {activeStep === "organogram" && selectedArea && (
+            <>
+              <div className="toolbar">
+                <div>
+                  <h1>Organograma funcional</h1>
+                  <p>Informe areas, responsaveis, funcoes, lacunas e alcadas.</p>
+                </div>
+                <button className="button secondary" onClick={addArea} type="button">
+                  Nova area
+                </button>
+              </div>
+
+              <div className="rcf-list">
+                {organogram.map((area) => (
+                  <div className="rcf-item" key={area.id}>
+                    <button className="button secondary" onClick={() => setSelectedAreaId(area.id)} type="button">
+                      {area.areaName || "Area sem nome"}
+                    </button>
+                    <button className="button secondary" onClick={() => removeArea(area.id)} type="button">
+                      Remover
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid" style={{ marginTop: 18 }}>
+                <FormField label="Area da empresa" onChange={(v) => updateArea("areaName", v)} value={selectedArea.areaName} />
+                <FormField label="Responsavel pela area" onChange={(v) => updateArea("responsible", v)} value={selectedArea.responsible} />
+                <FormField full label="Missao da area" multiline onChange={(v) => updateArea("areaMission", v)} value={selectedArea.areaMission} />
+                <FormField full label="Indicadores da area" multiline onChange={(v) => updateArea("indicators", v)} value={selectedArea.indicators} />
+                <FormField full label="Funcoes existentes" multiline onChange={(v) => updateArea("existingRoles", v)} value={selectedArea.existingRoles} />
+                <FormField full label="Funcoes necessarias" multiline onChange={(v) => updateArea("neededRoles", v)} value={selectedArea.neededRoles} />
+                <FormField full label="Acumulos de funcao" multiline onChange={(v) => updateArea("accumulatedRoles", v)} value={selectedArea.accumulatedRoles} />
+                <FormField full label="Lacunas" multiline onChange={(v) => updateArea("gaps", v)} value={selectedArea.gaps} />
+                <FormField full label="Sobreposicao de responsabilidades" multiline onChange={(v) => updateArea("responsibilityOverlap", v)} value={selectedArea.responsibilityOverlap} />
+                <FormField full label="Alcadas de decisao" multiline onChange={(v) => updateArea("decisionAuthority", v)} value={selectedArea.decisionAuthority} />
+              </div>
+            </>
+          )}
+
           {activeStep === "export" && (
             <>
               <h1>Exportacao para o consultor</h1>
               <p>
-                O arquivo JSON concentra Dados da Empresa, PVE e RCFs. Ele foi
-                pensado para ser importado depois na ferramenta do consultor,
-                onde ficarao organograma, diagnostico e recomendacoes.
+                O arquivo JSON concentra Dados da Empresa, PVE, RCFs e
+                Organograma. Ele foi pensado para ser importado depois na
+                ferramenta do consultor.
               </p>
               <div className="notice">
                 O diagnostico nao aparece para o gestor nesta versao. Ele fica
