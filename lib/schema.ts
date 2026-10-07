@@ -48,6 +48,7 @@ export type WorkspaceData = {
   company: CompanyData;
   pve: PveData;
   rcfs: RcfData[];
+  organogram: OrganogramArea[];
 };
 
 export type OrganogramArea = {

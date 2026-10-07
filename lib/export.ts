@@ -8,7 +8,8 @@ export function buildConsultantExport(data: WorkspaceData) {
     modules: {
       company: data.company,
       pve: data.pve,
-      rcf: data.rcfs
+      rcf: data.rcfs,
+      organogram: data.organogram
     },
     consultantUse: {
       organogramStatus: "pendente_consultor",
