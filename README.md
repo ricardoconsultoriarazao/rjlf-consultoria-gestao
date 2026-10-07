@@ -8,6 +8,11 @@ Aplicacao Next.js pronta para Vercel + Supabase.
 - PVE
 - RCF por funcao
 - Exportacao JSON para uso posterior na ferramenta do consultor
+- Ferramenta do consultor em `/consultor`
+- Envio de convite por e-mail via Supabase Auth
+- Importacao do JSON do gestor
+- Organograma funcional
+- Diagnostico, recomendacoes e proximos passos em ambiente separado
 
 Organograma, diagnostico e recomendacoes ficam fora desta versao do gestor.
 
