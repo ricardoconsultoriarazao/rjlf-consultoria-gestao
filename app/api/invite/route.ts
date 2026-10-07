@@ -2,6 +2,16 @@ import { NextResponse } from "next/server";
 import { createSupabaseAdmin } from "../../../lib/server/supabaseAdmin";
 
 export async function POST(request: Request) {
+  const cookie = request.headers.get("cookie") || "";
+  const expectedToken = process.env.CONSULTANT_SESSION_TOKEN;
+
+  if (expectedToken && !cookie.includes(`rjlf_consultor_session=${expectedToken}`)) {
+    return NextResponse.json(
+      { error: "Acesso do consultor nao autenticado." },
+      { status: 401 }
+    );
+  }
+
   const admin = createSupabaseAdmin();
 
   if (!admin) {
