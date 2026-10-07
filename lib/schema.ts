@@ -50,6 +50,28 @@ export type WorkspaceData = {
   rcfs: RcfData[];
 };
 
+export type OrganogramArea = {
+  id: string;
+  areaName: string;
+  responsible: string;
+  areaMission: string;
+  indicators: string;
+  existingRoles: string;
+  neededRoles: string;
+  accumulatedRoles: string;
+  gaps: string;
+  responsibilityOverlap: string;
+  decisionAuthority: string;
+};
+
+export type ConsultantData = {
+  imported: WorkspaceData | null;
+  organogram: OrganogramArea[];
+  diagnosis: string;
+  recommendations: string;
+  nextSteps: string;
+};
+
 export const emptyCompany: CompanyData = {
   companyName: "",
   tradeName: "",
@@ -99,3 +121,20 @@ export function createEmptyRcf(): RcfData {
 }
 
 export const storageKey = "rjlf-consultoria-gestao";
+export const consultantStorageKey = "rjlf-consultoria-consultor";
+
+export function createEmptyOrganogramArea(): OrganogramArea {
+  return {
+    id: crypto.randomUUID(),
+    areaName: "",
+    responsible: "",
+    areaMission: "",
+    indicators: "",
+    existingRoles: "",
+    neededRoles: "",
+    accumulatedRoles: "",
+    gaps: "",
+    responsibilityOverlap: "",
+    decisionAuthority: ""
+  };
+}
