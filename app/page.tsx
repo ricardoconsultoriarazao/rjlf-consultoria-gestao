@@ -25,10 +25,10 @@ export default function HomePage() {
           </p>
           <div className="actions">
             <Link className="button" href="/login">
-              Entrar
+              Entrar como gestor
             </Link>
-            <Link className="button secondary" href="/dashboard">
-              Abrir demonstracao
+            <Link className="button secondary" href="/consultor">
+              Entrar como consultor
             </Link>
           </div>
         </div>
@@ -47,6 +47,10 @@ export default function HomePage() {
             <div className="step-card">
               <strong>3. RCF</strong>
               <span>Construcao individual por funcao.</span>
+            </div>
+            <div className="step-card">
+              <strong>Consultor</strong>
+              <span>Convites, importacao, organograma e devolutiva.</span>
             </div>
           </div>
         </div>

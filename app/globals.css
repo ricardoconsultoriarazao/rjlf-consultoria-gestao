@@ -254,6 +254,35 @@ select {
   padding: 12px;
 }
 
+.check-row {
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--green-950);
+  display: flex;
+  font-weight: 700;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 12px;
+}
+
+.check-row input {
+  height: 18px;
+  width: 18px;
+}
+
+.summary-box {
+  background: #fbfcfa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-top: 18px;
+  padding: 18px;
+}
+
+.summary-box h2 {
+  margin: 0 0 8px;
+}
+
 @media (max-width: 860px) {
   .hero,
   .workspace,
