@@ -7,14 +7,16 @@ Aplicacao Next.js pronta para Vercel + Supabase.
 - Dados da Empresa
 - PVE
 - RCF por funcao
+- Organograma funcional do gestor quando liberado pelo consultor
 - Exportacao JSON para uso posterior na ferramenta do consultor
 - Ferramenta do consultor em `/consultor`
+- Login com senha para o consultor em `/consultor-login`
 - Envio de convite por e-mail via Supabase Auth
 - Importacao do JSON do gestor
 - Organograma funcional
 - Diagnostico, recomendacoes e proximos passos em ambiente separado
 
-Organograma, diagnostico e recomendacoes ficam fora desta versao do gestor.
+Diagnostico, recomendacoes e proximos passos ficam fora da area do gestor.
 
 ## Variaveis de ambiente
 
@@ -26,6 +28,10 @@ Configure na Vercel em `Settings > Environment Variables`:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase > Project Settings > API > anon public |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase > Project Settings > API > service_role |
 | `NEXT_PUBLIC_APP_URL` | URL do site na Vercel |
+| `CONSULTANT_PASSWORD` | Senha que voce usara para entrar como consultor |
+| `CONSULTANT_SESSION_TOKEN` | Texto longo e secreto para proteger a sessao do consultor |
+
+Exemplo de `CONSULTANT_SESSION_TOKEN`: use uma frase aleatoria longa, sem espacos, como `rjlf-consultor-2026-token-seguro`.
 
 ## Rodar localmente
 
