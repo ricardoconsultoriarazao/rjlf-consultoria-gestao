@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
 
   const loginUrl = new URL("/consultor-login", request.url);
   loginUrl.searchParams.set("next", request.nextUrl.pathname);
-  return NextResponse.redirect(loginUrl);
+  return NextResponse.redirect(loginUrl, 303);
 }
 
 export const config = {
